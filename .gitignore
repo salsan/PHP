@@ -5,3 +5,9 @@ composer.phar
 # You may choose to ignore a library lock file http://getcomposer.org/doc/02-libraries.md#lock-file
 # composer.lock
 .dccache
+
+# Node
+node_modules/*
+
+# PHPUnit
+.phpunit.result.cache
