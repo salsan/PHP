@@ -1,0 +1,5 @@
+{
+  "scripts": {
+    "PHPUnit": ".\\vendor\\bin\\phpunit"
+  }
+}
