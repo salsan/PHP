@@ -4,7 +4,9 @@
         {
             "label": "PHPUnit",
             "type": "shell",
-            "command": ".\\vendor\\bin\\phpunit",
+            "windows": {
+                "command": ".\\vendor\\bin\\phpunit",
+              },      
             "group": "test",
             "presentation": {
                 "reveal": "always",
