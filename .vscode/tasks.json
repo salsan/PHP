@@ -1,12 +1,16 @@
 {
-	"version": "2.0.0",
-	"tasks": [
-		{
-			"type": "npm",
-			"script": "PHPUnit",
-			"problemMatcher": [],
-			"label": "npm: PHPUnit",
-			"detail": ".\\vendor\\bin\\phpunit"
-		}
-	]
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "PHPUnit",
+            "type": "shell",
+            "command": ".\\vendor\\bin\\phpunit",
+            "group": "test",
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            },
+            "problemMatcher": []
+        }
+    ]
 }
