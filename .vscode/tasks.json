@@ -14,5 +14,31 @@
             },
             "problemMatcher": []
         }
+        {
+            "label": "PHP Code Sniffer",
+            "type": "shell",
+            "windows":{
+                "command": ".\\vendor\\bin\\phpcs.bat",
+                "args": ["--standard=PSR12",  "${file}"]
+            },    
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "PHP Code Beautifier",
+            "type": "shell",
+            "windows": {
+                "command": ".\\vendor\\bin\\phpcbf.bat",
+                "args": ["--standard=PSR12",  "${file}"]
+            },        
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            },
+            "problemMatcher": []
+        }
     ]
 }
