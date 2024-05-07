@@ -7,4 +7,5 @@
 
     <!-- Additional custom rules can be added here -->
     <exclude-pattern>tests/*</exclude-pattern>
+    <exclude-pattern>vendor/*</exclude-pattern>
 </ruleset>
