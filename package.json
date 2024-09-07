@@ -2,7 +2,9 @@
     "scripts": {
       "Test": "vendor\\bin\\phpunit",
       "Linter": "vendor\\bin\\phpcs --standard=ruleset.xml ./src -v",
-      "Beautifier": "vendor\\bin\\phpcbf --standard=ruleset.xml ./src -v"
+      "Beautifier": "vendor\\bin\\phpcbf --standard=ruleset.xml ./src -v",
+      "Benchmark": "vendor\\bin\\phpbench run tests/Benchmark --report=default",
+      "Analysis Static": "vendor\\bin\\phpstan analyse -c phpstan.neon"
     },
     "name": "myapp",
     "directories": {

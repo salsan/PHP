@@ -1,0 +1,13 @@
+# phpstan.neon
+parameters:
+    # Directories to be analyzed
+    paths:
+        - src
+
+    # Maximum analysis level (0 = minimum, 9 = maximum)
+    level: max
+
+      # File extensions to consider (optional)
+    fileExtensions:
+        - php
+

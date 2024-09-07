@@ -2,6 +2,7 @@
     "recommendations": [
         "editorconfig.editorconfig",
         "xdebug.php-debug",
-        "valeryanm.vscode-phpsab"
+        "valeryanm.vscode-phpsab",
+        "swordev.phpstan"
     ]
 }
