@@ -1,23 +1,26 @@
 {
     "scripts": {
-      "Test": "vendor\\bin\\phpunit",
-      "Linter": "vendor\\bin\\phpcs --standard=ruleset.xml ./src -v",
-      "Beautifier": "vendor\\bin\\phpcbf --standard=ruleset.xml ./src -v",
-      "Benchmark": "vendor\\bin\\phpbench run tests/Benchmark --report=default",
-      "Analysis Static": "vendor\\bin\\phpstan analyse -c phpstan.neon"
+        "Test": "vendor\\bin\\phpunit",
+        "Linter": "vendor\\bin\\phpcs --standard=ruleset.xml ./src -v",
+        "Beautifier": "vendor\\bin\\phpcbf --standard=ruleset.xml ./src -v",
+        "Benchmark": "vendor\\bin\\phpbench run tests/Benchmark --report=default",
+        "Analysis Static": "vendor\\bin\\phpstan analyse -c phpstan.neon",
+        "setup": "node -e \"process.platform==='win32'?console.log('Use: npm run setup:win'):console.log('Use: npm run setup:unix')\"",
+        "setup:unix": "bash setup.sh",
+        "setup:win": "setup.bat"
     },
     "name": "myapp",
     "directories": {
-      "test": "tests"
+        "test": "tests"
     },
     "repository": {
-      "type": "git",
-      "url": "git+https://github.com/salsan/PHP.git"
+        "type": "git",
+        "url": "git+https://github.com/salsan/PHP.git"
     },
     "author": "Salvatore Santagati",
     "license": "MIT",
     "bugs": {
-      "url": "https://github.com/salsan/PHP/issues"
+        "url": "https://github.com/salsan/PHP/issues"
     },
     "homepage": "https://github.com/salsan/PHP#readme"
-  }
+}

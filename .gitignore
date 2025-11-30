@@ -12,4 +12,5 @@ node_modules/*
 # PHPUnit
 .phpunit.result.cache
 
-
+# Backup of original README before setup script modifies it
+README.original.md
