@@ -4,6 +4,7 @@
 declare(strict_types=1);
 
 (function (): void {
+    // Simple color helper for console output
     $color = function (string $text, string $code): string {
         static $useColors = null;
         if ($useColors === null) {
@@ -14,6 +15,7 @@ declare(strict_types=1);
         return $useColors ? "\033[{$code}m{$text}\033[0m" : $text;
     };
 
+    // Ask helper with default value
     $ask = function (string $question, ?string $default = null) use ($color): string {
         $suffix = $default !== null ? " [$default]" : "";
         echo $color("?> ", "0;35") . $question . $suffix . ": ";
@@ -21,6 +23,7 @@ declare(strict_types=1);
         return ($answer === "" && $default !== null) ? $default : $answer;
     };
 
+    // Read git config (user.name, user.email, etc.)
     $gitConfig = function (string $key): ?string {
         $output = [];
         $exitCode = 0;
@@ -38,6 +41,7 @@ declare(strict_types=1);
         exit(1);
     }
 
+    // Paths for the README template, the generated README, and its backup
     $templateFile = $projectRoot . "/README.template.md";
     $readmeFile   = $projectRoot . "/README.md";
     $backupFile   = $projectRoot . "/README.original.md";
@@ -49,6 +53,9 @@ declare(strict_types=1);
 
     echo $color("=== PHP TEMPLATE README SETUP ===", "1;34") . PHP_EOL . PHP_EOL;
 
+    // -------------------------------------------------------------------------
+    // Defaults
+    // -------------------------------------------------------------------------
     $defaultVendor   = "salsan";
     $defaultName     = basename($projectRoot);
     $defaultTitle    = "PHP Template";
@@ -60,16 +67,18 @@ declare(strict_types=1);
     $gitName  = $gitConfig('user.name');
     $gitEmail = $gitConfig('user.email');
 
+    // -------------------------------------------------------------------------
+    // Ask for basic project info
+    // -------------------------------------------------------------------------
     $title       = $ask("Project title", $defaultTitle);
     $vendor      = $ask("Vendor / GitHub user or org", $defaultVendor);
     $packageName = $ask("Repository / package name", $defaultName);
     $description = $ask("Short description", $defaultDesc);
     $phpVersion  = $ask("Minimum PHP version", $defaultPhp);
 
-    // -----------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
     // License: show available, then ask
-    // -----------------------------------------------------------------------------
-
+    // -------------------------------------------------------------------------
     $licenseLinks = [
         "MIT"          => "https://opensource.org/licenses/MIT",
         "Apache-2.0"   => "https://www.apache.org/licenses/LICENSE-2.0",
@@ -109,33 +118,35 @@ declare(strict_types=1);
 
     $licenseUrl = $licenseLinks[$license] ?? "https://spdx.org/licenses/{$license}.html";
 
-    // -----------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
     // Badge values for Shields.io
-    // {{LICENSE_BADGE}}         → versioned, compatible with Shields (GPL-3.0 → GPL--3.0)
-    // {{LICENSE_BADGE_SIMPLE}}  → only alphabetic (GPL-3.0 → GPL)
-    // -----------------------------------------------------------------------------
+    // {{LICENSE_BADGE}}         → versioned, compatible with Shields
+    // {{LICENSE_BADGE_SIMPLE}}  → only alphabetic (not used yet but ready)
+    // -------------------------------------------------------------------------
+    $licenseBadge        = str_replace('-', '--', $license);
+    $licenseBadgeSimple  = preg_replace('/[^A-Za-z]/', '', $license);
 
-    // Versioned badge (compatible with path-based Shields format)
-    $licenseBadge = str_replace('-', '--', $license);
-
-    // Simple badge label with only letters (e.g. "GPL" from "GPL-3.0")
-    $licenseBadgeSimple = preg_replace('/[^A-Za-z]/', '', $license);
-
+    // -------------------------------------------------------------------------
+    // Placeholder replacements (README)
+    // -------------------------------------------------------------------------
     $replacements = [
-        "{{TITLE}}"               => $title,
-        "{{VENDOR}}"              => $vendor,
-        "{{NAME}}"                => $packageName,
-        "{{DESCRIPTION}}"         => $description,
-        "{{PHP_VERSION}}"         => $phpVersion,
-        "{{LICENSE}}"             => $license,
-        "{{LICENSE_URL}}"         => $licenseUrl,
-        "{{LICENSE_BADGE}}"       => $licenseBadge,
+        "{{TITLE}}"                => $title,
+        "{{VENDOR}}"               => $vendor,
+        "{{NAME}}"                 => $packageName,
+        "{{DESCRIPTION}}"          => $description,
+        "{{PHP_VERSION}}"          => $phpVersion,
+        "{{LICENSE}}"              => $license,
+        "{{LICENSE_URL}}"          => $licenseUrl,
+        "{{LICENSE_BADGE}}"        => $licenseBadge,
         "{{LICENSE_BADGE_SIMPLE}}" => $licenseBadgeSimple,
-        "{{AUTHOR_NAME}}"         => $authorName,
-        "{{AUTHOR_EMAIL}}"        => $authorEmail,
-        "{{YEAR}}"                => date("Y"),
+        "{{AUTHOR_NAME}}"          => $authorName,
+        "{{AUTHOR_EMAIL}}"         => $authorEmail,
+        "{{YEAR}}"                 => date("Y"),
     ];
 
+    // -------------------------------------------------------------------------
+    // Backup original README.md (only once)
+    // -------------------------------------------------------------------------
     if (file_exists($readmeFile) && !file_exists($backupFile)) {
         if (@rename($readmeFile, $backupFile)) {
             echo $color("[OK] README.md backed up to README.original.md", "0;32") . PHP_EOL;
@@ -144,6 +155,9 @@ declare(strict_types=1);
         }
     }
 
+    // -------------------------------------------------------------------------
+    // Generate README.md from template
+    // -------------------------------------------------------------------------
     $templateContent = file_get_contents($templateFile);
     if ($templateContent === false) {
         echo $color("[ERR] Could not read README.template.md", "0;31") . PHP_EOL;
@@ -162,5 +176,65 @@ declare(strict_types=1);
     }
 
     echo PHP_EOL . $color("[OK] README.md generated successfully", "0;32") . PHP_EOL;
+
+    // -------------------------------------------------------------------------
+    // Update package.json (if present)
+    // -------------------------------------------------------------------------
+    $packageJsonPath = $projectRoot . '/package.json';
+    if (file_exists($packageJsonPath)) {
+        $jsonRaw = file_get_contents($packageJsonPath);
+        $data    = json_decode($jsonRaw ?: '', true);
+
+        if (is_array($data)) {
+            // Update basic metadata
+            $data['name']     = $packageName;
+            $data['author']   = $authorName . ' <' . $authorEmail . '>';
+            $data['license']  = $license;
+
+            $repoUrlBase = "https://github.com/{$vendor}/{$packageName}";
+
+            $data['repository']['type'] = $data['repository']['type'] ?? 'git';
+            $data['repository']['url']  = "git+{$repoUrlBase}.git";
+
+            $data['bugs']['url']      = "{$repoUrlBase}/issues";
+            $data['homepage']         = "{$repoUrlBase}#readme";
+
+            // Ensure scripts array exists
+            if (!isset($data['scripts']) || !is_array($data['scripts'])) {
+                $data['scripts'] = [];
+            }
+
+            // Adjust PHP QA scripts to check both bin and src
+            $data['scripts']['Test']           = $data['scripts']['Test']           ?? 'vendor\\bin\\phpunit';
+            $data['scripts']['Linter']         = 'vendor\\bin\\phpcs --standard=ruleset.xml '
+                                                   . './bin ./src -v';
+            $data['scripts']['Beautifier']     = 'vendor\\bin\\phpcbf --standard=ruleset.xml ./bin ./src -v';
+            $data['scripts']['Benchmark']      = $data['scripts']['Benchmark']      ?? (
+                'vendor\\bin\\phpbench run tests/Benchmark --report=default'
+            );
+            $data['scripts']['Analysis Static'] = 'vendor\\bin\\phpstan analyse -c phpstan.neon';
+
+            // Keep setup scripts for npm
+            $data['scripts']['setup']      = $data['scripts']['setup']      ?? (
+                "node -e \"process.platform==='win32'?console.log('Use: npm run setup:win'):" .
+                "console.log('Use: npm run setup:unix')\""
+            );
+            $data['scripts']['setup:unix'] = $data['scripts']['setup:unix'] ?? "bash setup.sh";
+            $data['scripts']['setup:win']  = $data['scripts']['setup:win']  ?? "setup.bat";
+
+            $encoded = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+            if ($encoded !== false) {
+                file_put_contents($packageJsonPath, $encoded . PHP_EOL);
+                echo $color("[OK] package.json updated", "0;32") . PHP_EOL;
+            } else {
+                echo $color("[WARN] Could not encode package.json", "1;33") . PHP_EOL;
+            }
+        } else {
+            echo $color("[WARN] package.json is not valid JSON", "1;33") . PHP_EOL;
+        }
+    } else {
+        echo $color("[INFO] package.json not found, skipping JS tooling update", "0;36") . PHP_EOL;
+    }
+
     echo $color("Done.", "1;32") . PHP_EOL;
 })();
