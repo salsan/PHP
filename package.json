@@ -1,14 +1,15 @@
 {
     "scripts": {
         "Test": "vendor\\bin\\phpunit",
-        "Linter": "vendor\\bin\\phpcs --standard=ruleset.xml ./bin -v",
-        "Beautifier": "vendor\\bin\\phpcbf --standard=ruleset.xml ./bin -v",
+        "Linter": "vendor\\bin\\phpcs --standard=ruleset.xml ./bin ./src -v",
+        "Beautifier": "vendor\\bin\\phpcbf --standard=ruleset.xml ./bin ./src -v",
         "Benchmark": "vendor\\bin\\phpbench run tests/Benchmark --report=default",
         "Analysis Static": "vendor\\bin\\phpstan analyse -c phpstan.neon",
         "setup:unix": "bash setup.sh",
-        "setup:win": "setup.bat"
+        "setup:win": "setup.bat",
+        "setup": "node -e \"process.platform==='win32'?console.log('Use: npm run setup:win'):console.log('Use: npm run setup:unix')\""
     },
-    "name": "myapp",
+    "name": "PHP",
     "directories": {
         "test": "tests"
     },
@@ -16,8 +17,8 @@
         "type": "git",
         "url": "git+https://github.com/salsan/PHP.git"
     },
-    "author": "Salvatore Santagati",
-    "license": "MIT",
+    "author": "Salvatore Santagati <github@salsan.dev>",
+    "license": "Unlicense",
     "bugs": {
         "url": "https://github.com/salsan/PHP/issues"
     },
