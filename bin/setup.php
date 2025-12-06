@@ -236,5 +236,80 @@ declare(strict_types=1);
         echo $color("[INFO] package.json not found, skipping JS tooling update", "0;36") . PHP_EOL;
     }
 
+    // -------------------------------------------------------------------------
+// Update composer.json
+// -------------------------------------------------------------------------
+    $composerJsonPath = $projectRoot . '/composer.json';
+
+    if (file_exists($composerJsonPath)) {
+        echo PHP_EOL . $color("[INFO] Updating composer.json ...", "1;36") . PHP_EOL;
+
+        $jsonRaw = file_get_contents($composerJsonPath);
+        $data    = json_decode($jsonRaw ?: '', true);
+
+        if (!is_array($data)) {
+            echo $color("[WARN] composer.json is invalid JSON, skipping update", "1;33") . PHP_EOL;
+        } else {
+            // 1. Name (vendor/project)
+            $data['name'] = strtolower($vendor . '/' . $packageName);
+
+            // 2. Description
+            $data['description'] = $description;
+
+            // 3. License
+            $data['license'] = $license;
+
+            // 4. Authors update
+            $data['authors'] = [
+            [
+                'name'  => $authorName,
+                'email' => $authorEmail,
+            ]
+            ];
+
+            // 5. Update minimum PHP version
+            if (!isset($data['require'])) {
+                $data['require'] = [];
+            }
+            $data['require']['php'] = ">=" . $phpVersion;
+
+            // 6. Update autoload namespace based on vendor + project name
+            $namespaceRoot = ucfirst($vendor) . '\\' . ucfirst($packageName) . '\\';
+            $namespaceRoot = str_replace('-', '', $namespaceRoot); // prevent hyphens breaking namespace
+
+            if (!isset($data['autoload'])) {
+                $data['autoload'] = ["psr-4" => []];
+            }
+            $data['autoload']['psr-4'] = [
+            $namespaceRoot => "src/"
+            ];
+
+            // 7. Update Dev autoload namespace
+            $data['autoload-dev']['psr-4'] = [
+            "Tests\\" => "tests/"
+            ];
+
+            // 8. Optional: repository & homepage links
+            $repoBase = "https://github.com/$vendor/$packageName";
+
+            $data['homepage'] = $repoBase;
+            $data['support']  = [
+            'issues' => "$repoBase/issues",
+            'source' => "$repoBase"
+            ];
+
+            // 9. rewrite JSON safely
+            $encoded = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+            if ($encoded !== false) {
+                file_put_contents($composerJsonPath, $encoded . PHP_EOL);
+                echo $color("[OK] composer.json updated", "0;32") . PHP_EOL;
+            } else {
+                echo $color("[WARN] Failed encoding composer.json rewrite", "1;33") . PHP_EOL;
+            }
+        }
+    } else {
+        echo $color("[INFO] composer.json not found, skipping update", "0;36") . PHP_EOL;
+    }
+
     echo $color("Done.", "1;32") . PHP_EOL;
 })();
