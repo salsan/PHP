@@ -3,6 +3,7 @@ parameters:
     # Directories to be analyzed
     paths:
         - src
+        - bin
 
     # Maximum analysis level (0 = minimum, 9 = maximum)
     level: max
