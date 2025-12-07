@@ -56,12 +56,11 @@ declare(strict_types=1);
     // -------------------------------------------------------------------------
     // Defaults
     // -------------------------------------------------------------------------
-    $defaultVendor   = "salsan";
+    $defaultVendor   = "default-vendor";
     $defaultName     = basename($projectRoot);
-    $defaultTitle    = "PHP Template";
-    $defaultDesc     = "A minimal and flexible PHP template to kickstart your PHP projects, "
-        . "including development tools for linting, testing, and ensuring code quality.";
-    $defaultPhp      = "8.1.10";
+    $defaultTitle    = "default-title";
+    $defaultDesc     = "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Numquam, ea!";
+    $defaultPhp      = "4.0.0";
     $defaultLicense  = "MIT";
 
     $gitName  = $gitConfig('user.name');
