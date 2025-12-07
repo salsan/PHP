@@ -1,8 +1,12 @@
 {
     "name": "salsan/myapp",
     "description": "Write a description here",
-    "type": "library",    
-    "keywords": ["example tag1", "example tag2", "example tag3"],
+    "type": "library",
+    "keywords": [
+        "example tag1",
+        "example tag2",
+        "example tag3"
+    ],
     "license": "MIT",
     "autoload": {
         "psr-4": {
@@ -21,12 +25,12 @@
     "require-dev": {
         "phpunit/phpunit": "9.5.27",
         "squizlabs/php_codesniffer": "3.*",
-        "phpstan/phpstan": "^1.12"
+        "phpstan/phpstan": "^1.12",
+        "phpbench/phpbench": "^1.2"
     },
     "autoload-dev": {
         "psr-4": {
             "Tests\\": "tests/"
         }
     }
-
 }
